@@ -17,3 +17,10 @@ The implementation of this module is inspired by the following prior art in the 
 ## Caveats
 
 - Built-in objects are not observed except for `Array`, `Map`, `WeakMap`, `Set` and `WeakSet`.
+
+
+
+
+## ref
+- https://zh.javascript.info/proxy
+- 

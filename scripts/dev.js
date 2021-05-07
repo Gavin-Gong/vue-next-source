@@ -33,7 +33,7 @@ execa(
       `COMMIT:${commit}`,
       `TARGET:${target}`,
       `FORMATS:${formats || 'global'}`,
-      sourceMap ? `SOURCE_MAP:true` : ``
+      sourceMap || true ? `SOURCE_MAP:true` : ``
     ]
       .filter(Boolean)
       .join(',')

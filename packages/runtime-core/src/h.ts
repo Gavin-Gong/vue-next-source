@@ -171,6 +171,13 @@ export function h<P>(
 ): VNode
 
 // Actual implementation
+/**
+ * @desc 实现 h 函数， 支持多参数，实现泛型重载
+ * @param type
+ * @param propsOrChildren
+ * @param children
+ * @returns
+ */
 export function h(type: any, propsOrChildren?: any, children?: any): VNode {
   const l = arguments.length
   if (l === 2) {

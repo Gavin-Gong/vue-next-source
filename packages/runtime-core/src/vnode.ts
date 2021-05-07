@@ -265,7 +265,6 @@ export function createBlock(
   // save current block children on the block vnode
   vnode.dynamicChildren = currentBlock || (EMPTY_ARR as any)
   // close block
-  closeBlock()
   // a block is always going to be patched, so track it as a child of its
   // parent block
   if (shouldTrack > 0 && currentBlock) {
