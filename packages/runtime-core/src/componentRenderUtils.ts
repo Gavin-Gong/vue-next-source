@@ -199,7 +199,7 @@ export function renderComponentRoot(
         }
         root = cloneVNode(root, {
           class: cls,
-          style: style
+          style
         })
       }
     }

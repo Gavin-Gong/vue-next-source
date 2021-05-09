@@ -13,6 +13,18 @@ type DOMRendererOptions = RendererOptions<Node, Element>
 export const forcePatchProp: DOMRendererOptions['forcePatchProp'] = (_, key) =>
   key === 'value'
 
+/**
+ * @desc patch 元素属性，诸如 event style class attr
+ * @param el
+ * @param key
+ * @param prevValue
+ * @param nextValue
+ * @param isSVG
+ * @param prevChildren
+ * @param parentComponent
+ * @param parentSuspense
+ * @param unmountChildren
+ */
 export const patchProp: DOMRendererOptions['patchProp'] = (
   el,
   key,

@@ -74,6 +74,10 @@ export const nodeOps: Omit<RendererOptions<Node, Element>, 'patchProp'> = {
   // Reason: innerHTML.
   // Static content here can only come from compiled templates.
   // As long as the user only uses trusted templates, this is safe.
+  /**
+   * @desc 使用字符创生成静态节点 DOM，然后将所有元素依次取出，插入到目标 DOM 之中
+   * TODO: 一次插入或者可以优化？考虑 createDocumentFragment？
+   */
   insertStaticContent(content, parent, anchor, isSVG) {
     const temp = isSVG
       ? tempSVGContainer ||
@@ -85,8 +89,8 @@ export const nodeOps: Omit<RendererOptions<Node, Element>, 'patchProp'> = {
     let last: Element = node
     while (node) {
       last = node
-      nodeOps.insert(node, parent, anchor)
-      node = temp.firstChild as Element
+      nodeOps.insert(node, parent, anchor) // mod DOM
+      node = temp.firstChild as Element // query DOM
     }
     return [first, last]
   }

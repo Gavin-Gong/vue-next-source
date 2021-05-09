@@ -277,6 +277,12 @@ export function isVNode(value: any): value is VNode {
   return value ? value.__v_isVNode === true : false
 }
 
+/**
+ * @desc 判断 VNode 是否一致
+ * @param n1
+ * @param n2
+ * @returns
+ */
 export function isSameVNodeType(n1: VNode, n2: VNode): boolean {
   if (
     __DEV__ &&

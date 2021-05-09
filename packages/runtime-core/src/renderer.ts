@@ -305,6 +305,7 @@ export const queuePostRenderEffect = __FEATURE_SUSPENSE__
   ? queueEffectWithSuspense
   : queuePostFlushCb
 
+// TODO:
 export const setRef = (
   rawRef: VNodeNormalizedRef,
   oldRawRef: VNodeNormalizedRef | null,
@@ -457,6 +458,7 @@ function baseCreateRenderer(
     setDevtoolsHook(target.__VUE_DEVTOOLS_GLOBAL_HOOK__)
   }
 
+  // 注入的 nodeOps
   const {
     insert: hostInsert,
     remove: hostRemove,
@@ -494,6 +496,7 @@ function baseCreateRenderer(
       n1 = null
     }
 
+    // 绕过 blockTree 优化
     if (n2.patchFlag === PatchFlags.BAIL) {
       optimized = false
       n2.dynamicChildren = null
@@ -589,6 +592,9 @@ function baseCreateRenderer(
     }
   }
 
+  /**
+   * @desc 新建插入 Text 或者更新 Text
+   */
   const processText: ProcessTextOrCommentFn = (n1, n2, container, anchor) => {
     if (n1 == null) {
       hostInsert(
@@ -603,7 +609,9 @@ function baseCreateRenderer(
       }
     }
   }
-
+  /**
+   * @desc 新建插入 Comment 或者更新 Comment
+   */
   const processCommentNode: ProcessTextOrCommentFn = (
     n1,
     n2,
@@ -622,6 +630,9 @@ function baseCreateRenderer(
     }
   }
 
+  /**
+   * @desc 处理静态文本节点
+   */
   const mountStaticNode = (
     n2: VNode,
     container: RendererElement,
@@ -824,6 +835,7 @@ function baseCreateRenderer(
       transition!.beforeEnter(el)
     }
     hostInsert(el, container, anchor)
+    // TODO:
     if (
       (vnodeHook = props && props.onVnodeMounted) ||
       needCallTransitionHooks ||
@@ -1058,6 +1070,7 @@ function baseCreateRenderer(
   }
 
   // The fast path for blocks.
+  // patch for block tree
   const patchBlockChildren: PatchBlockChildrenFn = (
     oldChildren,
     newChildren,
@@ -1099,6 +1112,7 @@ function baseCreateRenderer(
     }
   }
 
+  // 全量 patch props 逻辑
   const patchProps = (
     el: RendererElement,
     vnode: VNode,
@@ -1319,6 +1333,7 @@ function baseCreateRenderer(
     }
 
     // inject renderer internals for keepAlive
+    // TODO:
     if (isKeepAlive(initialVNode)) {
       ;(instance.ctx as KeepAliveContext).renderer = internals
     }
@@ -1399,6 +1414,7 @@ function baseCreateRenderer(
     }
   }
 
+  // inject update fn to component instance for component update
   const setupRenderEffect: SetupRenderEffectFn = (
     instance,
     initialVNode,
@@ -1622,6 +1638,7 @@ function baseCreateRenderer(
     }
   }
 
+  // TODO:
   const updateComponentPreRender = (
     instance: ComponentInternalInstance,
     nextVNode: VNode,
@@ -1695,6 +1712,7 @@ function baseCreateRenderer(
     if (shapeFlag & ShapeFlags.TEXT_CHILDREN) {
       // text children fast path
       if (prevShapeFlag & ShapeFlags.ARRAY_CHILDREN) {
+        // arrary -> text, just unmount old children
         unmountChildren(c1 as VNode[], parentComponent, parentSuspense)
       }
       if (c2 !== c1) {
@@ -1717,7 +1735,7 @@ function baseCreateRenderer(
             optimized
           )
         } else {
-          // no new children, just unmount old
+          // to no new children, just unmount old
           unmountChildren(c1 as VNode[], parentComponent, parentSuspense, true)
         }
       } else {
@@ -1726,7 +1744,7 @@ function baseCreateRenderer(
         if (prevShapeFlag & ShapeFlags.TEXT_CHILDREN) {
           hostSetElementText(container, '')
         }
-        // mount new if array
+        // text | null -> array, mount new if array
         if (shapeFlag & ShapeFlags.ARRAY_CHILDREN) {
           mountChildren(
             c2 as VNodeArrayChildren,
@@ -2131,7 +2149,7 @@ function baseCreateRenderer(
     if (ref != null) {
       setRef(ref, null, parentSuspense, vnode, true)
     }
-
+    // deactive keep-alive component
     if (shapeFlag & ShapeFlags.COMPONENT_SHOULD_KEEP_ALIVE) {
       ;(parentComponent!.ctx as KeepAliveContext).deactivate(vnode)
       return
@@ -2347,6 +2365,8 @@ function baseCreateRenderer(
   }
 
   const render: RootRenderFunction = (vnode, container, isSVG) => {
+    // newVnode 为 null 则 unmount oldVnode
+    // 否则执行 patch
     if (vnode == null) {
       if (container._vnode) {
         unmount(container._vnode, null, null, true)
@@ -2354,6 +2374,7 @@ function baseCreateRenderer(
     } else {
       patch(container._vnode || null, vnode, container, null, null, null, isSVG)
     }
+    // TODO: 刷新任务队列
     flushPostFlushCbs()
     container._vnode = vnode
   }
@@ -2436,6 +2457,11 @@ export function traverseStaticChildren(n1: VNode, n2: VNode, shallow = false) {
 }
 
 // https://en.wikipedia.org/wiki/Longest_increasing_subsequence
+/**
+ * @desc 获取最长增长子序列 index leetcode 300 题目
+ * @param arr
+ * @returns
+ */
 function getSequence(arr: number[]): number[] {
   const p = arr.slice()
   const result = [0]
