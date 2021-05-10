@@ -22,12 +22,14 @@ const getModelAssigner = (vnode: VNode): AssignerFn => {
   return isArray(fn) ? value => invokeArrayFns(fn, value) : fn
 }
 
+type CompositionTarget = HTMLElement & { composing: boolean }
+
 function onCompositionStart(e: Event) {
-  ;(e.target as any).composing = true
+  ;(e.target as CompositionTarget).composing = true
 }
 
 function onCompositionEnd(e: Event) {
-  const target = e.target as any
+  const target = e.target as CompositionTarget
   if (target.composing) {
     target.composing = false
     trigger(target, 'input')
@@ -203,7 +205,10 @@ export const vModelSelect: ModelDirective<HTMLSelectElement> = {
   }
 }
 
-function setSelected(el: HTMLSelectElement, value: any) {
+function setSelected(
+  el: HTMLSelectElement,
+  value: Array<unknown> | Set<unknown>
+) {
   const isMultiple = el.multiple
   if (isMultiple && !isArray(value) && !isSet(value)) {
     __DEV__ &&
@@ -235,8 +240,10 @@ function setSelected(el: HTMLSelectElement, value: any) {
 }
 
 // retrieve raw value set via :value bindings
-function getValue(el: HTMLOptionElement | HTMLInputElement) {
-  return '_value' in el ? (el as any)._value : el.value
+function getValue(
+  el: (HTMLOptionElement | HTMLInputElement) & { _value?: unknown }
+) {
+  return '_value' in el ? el._value : el.value
 }
 
 // retrieve raw value for true-value and false-value set via :true-value or :false-value bindings
